@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import express from 'express';
 import cors, { CorsOptions} from "cors"
+import bodyParser from 'body-parser';
 
 const prisma = new PrismaClient();
 const app = express();
@@ -12,7 +13,9 @@ const corsOptions: CorsOptions = {
 }
 
 app.use(cors(corsOptions))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json());
+
 
 app.get('/todos', async (req, res) => {
   const todos = await prisma.todo.findMany();
@@ -20,10 +23,10 @@ app.get('/todos', async (req, res) => {
 })
 
 app.post('/todos', async (req, res) => {
+  console.log(req.body)  
   const todo = await prisma.todo.create({
     data: {
       title: req.body.title,
-      completed: req.body.completed,
     },
   });
   res.json(todo);
